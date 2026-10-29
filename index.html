@@ -1,0 +1,1327 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>O Mistério das Mulheres da Ciência</title>
+<meta name="description" content="Jogo de detetive e ciência: investigue salas, reúna pistas e descubra qual cientista é a investigada. Jogue no celular ou no computador.">
+<meta property="og:title" content="O Mistério das Mulheres da Ciência"><meta property="og:description" content="Jogo de detetive: reúna pistas e descubra a cientista.">
+<meta property="og:type" content="website"><meta name="theme-color" content="#050b14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🔎%3C/text%3E%3C/svg%3E">
+
+<style>
+:root{--fs:15px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#050c14;color:#edf6ff;font:var(--fs)/1.4 system-ui,sans-serif}
+#w{position:fixed;inset:0;container-type:size}
+canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;touch-action:none}
+body.hc canvas{filter:contrast(1.5) saturate(1.3) brightness(1.1)}
+body.hc .dlg{background:#000;border-color:#fff}body.hc button{background:#000;border-color:#fff}
+button{font:inherit;color:#edf6ff;background:#21405b;border:1px solid #47708f;border-radius:10px;padding:10px 12px;cursor:pointer;touch-action:manipulation}
+#hud{position:absolute;top:calc(4px + env(safe-area-inset-top,0px));left:calc(6px + env(safe-area-inset-left,0px));right:calc(6px + env(safe-area-inset-right,0px));display:flex;gap:5px;justify-content:flex-end;flex-wrap:wrap;z-index:4;pointer-events:none}
+#hud>*{pointer-events:auto;padding:5px 9px;font-size:13px;background:#10223ad9}
+#st{border-radius:10px;border:1px solid #2c4866;margin-right:auto;display:none}
+body.pl #st{display:block}#hud .g{display:none}body.pl #hud .g{display:inline-block}
+.ov{position:absolute;inset:0;z-index:6;background:#06101bd9;display:flex;align-items:center;justify-content:center;padding:12px}
+.h{display:none!important}
+.dlg{width:min(560px,100%);max-height:100%;overflow:auto;background:#14263b;border:2px solid #5b8aa6;border-radius:14px;padding:16px}
+.dlg h2{margin:0 0 8px;color:#ffd166;font-size:1.25em}.dlg p{margin:0;white-space:pre-line}
+.ch{display:grid;gap:8px;margin-top:12px}.ch.kp{grid-template-columns:repeat(4,1fr)}
+.ch button{text-align:left}.ch.kp button{text-align:center;font-size:1.2em}.ch.g3{grid-template-columns:repeat(3,1fr)}.ch.g3 button{text-align:center;font-size:1.4em}
+button.gf{outline:3px solid #6be7e8;background:#2a6680}
+#ts,#pr{position:absolute;left:50%;transform:translateX(-50%);z-index:7;pointer-events:none;text-align:center;max-width:min(92vw,620px);background:#07101de6;border:1px solid #31516c;border-radius:10px;padding:6px 12px}
+#ts{bottom:17%;opacity:0;transition:opacity .4s}#pr{bottom:6%;color:#b7fff1;display:none}
+.tp{display:none;position:absolute;left:0;right:0;bottom:0;z-index:4;justify-content:space-between;align-items:flex-end;padding:10px calc(14px + env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) calc(14px + env(safe-area-inset-left,0px));pointer-events:none}
+body.ts.tc.pl:not(.gp) .tp{display:flex}
+.tp button{pointer-events:auto;touch-action:none;background:#21405bcc;min-width:64px;min-height:64px;font-size:26px;padding:6px;text-align:center}
+.dp{display:grid;grid-template-columns:repeat(3,68px);gap:6px}.dp i{display:block}
+.ab{display:flex;gap:10px;align-items:flex-end}.ab .big{min-width:112px;min-height:88px;font-size:17px;font-weight:800}
+#rot{display:none;position:fixed;inset:0;z-index:50;background:#06101bf2;align-items:center;justify-content:center;text-align:center;font-size:20px;padding:20px}
+@media(orientation:portrait){body.ts #w{inset:auto;top:0;left:100%;width:100vh;width:100dvh;height:100vw;height:100dvw;transform-origin:0 0;transform:rotate(90deg)}}
+body.hc .lb{background:#000}
+.ov:has(.lb){padding:0;background:#050b14d9}
+.lb{position:absolute;inset:0;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.9fr) minmax(0,.8fr);grid-template-rows:minmax(0,1fr) auto;gap:1.2cqh 2cqw;padding:calc(2cqh + env(safe-area-inset-top,0px)) calc(2.5cqw + env(safe-area-inset-right,0px)) calc(1.5cqh + env(safe-area-inset-bottom,0px)) calc(2.5cqw + env(safe-area-inset-left,0px));font-size:clamp(11px,2.9cqh,18px);background:radial-gradient(ellipse at 68% 55%,#12356a66,transparent 60%),linear-gradient(90deg,#050c14f2,#071426aa 55%,#050c14f2);overflow:hidden}
+.lm{display:flex;flex-direction:column;justify-content:center;gap:1.2cqh;min-width:0}
+.tt{display:flex;align-items:center;gap:.5em;line-height:1}
+.tt i{font-style:normal;font-size:1.8em;filter:drop-shadow(0 0 6px #35d0ff)}
+.tt span{display:block;font-family:Impact,'Arial Narrow',system-ui,sans-serif;font-weight:900;line-height:1.05;letter-spacing:.02em}
+.tt .t1{color:#9defff;font-size:1.4em;text-shadow:0 0 10px #1cb8ff}
+.tt .t2{color:#ffc247;font-size:1.9em;text-shadow:0 0 12px #ff9a1c88,0 2px 0 #7a3b00}
+.sub{margin:0;font-size:.62em;letter-spacing:.1em;color:#9bd3ee;text-transform:uppercase}
+.lc{display:grid;gap:1cqh}
+.lc button{display:flex;align-items:center;gap:.7em;width:100%;text-align:left;text-transform:uppercase;font-weight:700;letter-spacing:.04em;padding:.55em 1em;background:linear-gradient(#0f2a45,#09192c);border:2px solid #1f6f96;border-radius:8px;box-shadow:inset 0 0 8px #1cb8ff22}
+.lc .lj{font-size:1.5em;padding:.45em 1em;border-color:#37d4ff;box-shadow:0 0 14px #1cb8ff88,inset 0 0 12px #1cb8ff44}
+.ct{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}
+canvas.pvc{position:static;inset:auto;width:auto;height:min(52cqh,330px);aspect-ratio:28/30;max-width:100%;touch-action:auto}
+.pad{width:min(38cqh,230px);height:min(9cqh,54px);margin-top:calc(-1 * min(4.5cqh,27px));border-radius:50%;border:3px solid #2f9bff;box-shadow:0 0 18px #2f9bff,inset 0 0 14px #2f9bff88}
+.sp{align-self:center;background:#0a1a2de6;border:2px solid #1f6f96;border-radius:12px;padding:1.2cqh 1cqw;display:flex;flex-direction:column;gap:1cqh;min-width:0}
+.sp h3{margin:0;text-align:center;color:#7fe8ff;font-size:1.1em;letter-spacing:.08em}
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:.5em}
+.sk{position:relative;aspect-ratio:1;padding:0;background:#0d2238;border:2px solid #24506f;border-radius:8px}
+.sk canvas{position:absolute;inset:6%;width:88%;height:88%;object-fit:contain}
+.sk.on{border-color:#6be7e8;box-shadow:0 0 10px #35d0ffaa}
+.pg{display:flex;justify-content:center;align-items:center;gap:.8em}.pg button{padding:.2em .7em;background:none;border-color:#1f6f96}
+.sd{border:1px solid #24506f;border-radius:8px;padding:.5em .7em;font-size:.8em}.sd b{display:block;color:#ffd166}.sd span{color:#b5cfe0}
+.bh{grid-column:1/3;align-self:end;justify-self:start;background:#0a1a2de6;border:1px solid #1f6f96;border-radius:8px;padding:.4em .8em;font-size:.75em}
+.bv{grid-column:3;align-self:end;display:flex;align-items:center;gap:.6em;background:#0a1a2de6;border:1px solid #1f6f96;border-radius:8px;padding:.3em .6em}
+.bv input{flex:1;min-width:0;accent-color:#35d0ff}.bv button{padding:.2em .5em;background:none;border-color:#1f6f96}
+
+.ov:has(.al){padding:0;background:#050b14f2}
+.sp .ab3{padding:.35em;font-size:.85em;background:none;border-color:#1f6f96}
+.al{position:absolute;inset:0;display:grid;grid-template-columns:24cqw minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:1.2cqh 1.5cqw;padding:calc(2cqh + env(safe-area-inset-top,0px)) 2.5cqw calc(1.5cqh + env(safe-area-inset-bottom,0px));font-size:clamp(10px,2.6cqh,17px);background:linear-gradient(#050c14f2,#071426f2)}
+.hd{grid-column:1/3;display:flex;align-items:baseline;gap:1em;flex-wrap:wrap}.hd b{font-family:Impact,'Arial Narrow',sans-serif;font-size:1.8em;color:#7fe8ff;text-shadow:0 0 10px #1cb8ff}.hd span{color:#9bd3ee}.hd em{margin-left:auto;font-style:normal;border:2px solid #1f6f96;border-radius:8px;padding:.3em .8em;color:#ffd166}
+.lf{display:flex;flex-direction:column;gap:1cqh;min-height:0}
+.cs{display:grid;gap:.6cqh}.cs button{display:flex;gap:.6em;align-items:center;text-align:left;padding:.35em .8em;font-weight:700;background:#0b1d31;border:2px solid #1f6f96;border-radius:8px}.cs button.on{border-color:#37d4ff;box-shadow:0 0 10px #1cb8ff88;background:#10385a}
+.sd2{flex:1;min-height:0;border:2px solid #1f6f96;border-radius:10px;padding:.5em;background:#0a1a2de6;display:flex;flex-direction:column;align-items:center;overflow:hidden;text-align:center}.sd2 b{color:#7fe8ff}.sd2 span{font-size:.8em;color:#b5cfe0}
+.sd2 canvas.pvc{height:min(20cqh,130px)}.sd2 .pad{width:min(18cqh,110px);height:min(4.5cqh,28px);margin-top:calc(-1 * min(2cqh,14px))}
+.eq{margin-top:auto;border:2px solid #37d4ff;border-radius:8px;padding:.2em 1em;color:#7fe8ff;font-weight:700;font-size:.85em}
+.gr{overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(17cqw,1fr));gap:1.2cqh;align-content:start;padding:.4em;border:2px solid #1f6f96;border-radius:12px;background:#08172a99}
+.cd{display:flex;flex-direction:column;align-items:center;gap:.2em;padding:.4em;background:#0b2036;border:2px solid #24506f;border-radius:8px;font-size:.85em}
+.cd canvas{position:static;inset:auto;width:auto;height:min(15cqh,64px);aspect-ratio:28/30;touch-action:auto}
+.cd small{color:#8fb4cc}.cd.on{border-color:#6be7e8;box-shadow:0 0 10px #35d0ffaa}.cd.on small{color:#59e08a}
+.ft{grid-column:1/3;display:flex;justify-content:space-between;align-items:center;font-size:.75em;color:#9bd3ee}.ft button{padding:.3em 1em;background:#0b1d31;border-color:#37d4ff}
+.js{display:none;pointer-events:auto;touch-action:none;position:relative;width:132px;height:132px;border-radius:50%;background:#21405b99;border:2px solid #47708f;margin-bottom:6px}
+.js .kn{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:#6be7e8cc;border:2px solid #fff8;pointer-events:none}
+body.an .dp{display:none}.tp button,.js{opacity:var(--to,1)}body.an .js{display:block}
+.dlg canvas.pvc{display:block;margin:8px auto;height:min(30cqh,150px)}
+.ct{position:relative}
+.qrc{position:absolute;right:calc(2.5cqw + env(safe-area-inset-right,0px));bottom:calc(1.5cqh + env(safe-area-inset-bottom,0px));width:min(14cqh,64px);height:min(14cqh,64px);padding:3px;background:#fff;border:2px solid #37d4ff;border-radius:8px;color:#000;font-weight:800;font-size:.7em;box-shadow:0 0 10px #1cb8ff88}
+.qrc canvas{position:static;inset:auto;width:100%;height:100%;image-rendering:pixelated;touch-action:auto}
+.ov:has(.qrm){padding:0;background:#050b14f2}
+.qrm{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.2cqh;padding:2cqh 3cqw;font-size:clamp(11px,2.8cqh,17px);text-align:center}
+.qrm h2{margin:0;color:#ffd166}
+.qrm canvas.qrbig{position:static;inset:auto;width:min(58cqh,320px);height:min(58cqh,320px);image-rendering:pixelated;border:6px solid #fff;border-radius:6px;touch-action:auto;background:#fff}
+.qu{margin:0;max-width:90%;word-break:break-all;font-size:.8em;color:#9bd3ee}
+.qb{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.bv{margin-right:calc(min(14cqh,64px) + 1.5cqw);min-height:min(14cqh,64px);box-sizing:border-box}
+</style></head><body>
+<div id="w"><canvas id="c" aria-label="Jogo de investigação em pixel art"></canvas>
+<div id="hud"><div id="st"></div><button class="g" id="bm">☰</button><button class="g" id="bi">🎒</button><button class="g" id="bp">🗺</button><button class="g" id="bn">📋</button><button class="g" id="bh">💡</button><button id="bf">⛶</button></div>
+<div id="ts" role="status"></div><div id="pr"></div>
+<div class="tp"><div class="dp"><i></i><button data-k="up">▲</button><i></i><button data-k="left">◀</button><button data-k="down">▼</button><button data-k="right">▶</button></div><div class="js" id="js"><div class="kn"></div></div>
+<div class="ab"><button data-k="crouch" class="big">⬇ AGACHAR</button><button data-a="inv">🎒</button><button data-a="act" class="big">🔍 AGIR</button></div></div>
+<div id="ov" class="ov h"></div></div>
+<script>
+(()=>{
+// ===== Utilidades e estado =====
+const $=i=>document.getElementById(i),cv=$('c'),g0=cv.getContext('2d'),W=400,H=240;let g=g0;cv.width=W;cv.height=H;
+const ld=(k,d)=>{try{return Object.assign(d,JSON.parse(localStorage.getItem(k)))}catch(e){return d}};
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const CF=ld('mmc2c',{snd:1,vol:.7,hc:0,big:0,calm:0,tm:0,tc:1,coat:0}),AB=ld('mmc2a',{al:[],best:0});
+const rc=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),w,h)};
+const shuf=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const COAT=[
+['#8a6a4a','#c9a97c','#4a3d35','#3a2f2a','#d9bd78','#e0a47b','Detetive Clássico','O visual tradicional para quem não desiste de um bom mistério.',0,'d'],
+['#1d2a44','#6b8fd1','#26324f','#161e33','#6b8fd1','#e0a47b','Detetive Noturno','Se esconde nas sombras e resolve casos depois da meia-noite.',0,'d'],
+['#1b4f7a','#35d0ff','#1c3f66','#0f2640','#35d0ff','#e0a47b','Detetive Cyber','Neon e tecnologia de ponta para investigar o futuro.',0,'d'],
+['#efe6d2','#8a6a4a','#f0e4c0','#d8c99a','#8a6a4a','#e0a47b','Detetive de Verão','Leve e elegante para investigar sob o sol.',0,'d'],
+['#4b5d3a','#8aa05e','#3f5230','#2c3a22','#8aa05e','#e0a47b','Detetive Militar','Disciplina e camuflagem para missões difíceis.',0,'de'],
+['#6cc8ff','#d8f4ff','#8fdcff','#5fb7e8','#d8f4ff','#a9e4ff','Detetive Fantasma','Atravessa segredos e some sem deixar rastro.',0,'de',1],
+['#eef3f6','#3a7bd5','#5b3a29','#cfe8f2','#ff7ab0','#f1c9a5','Cientista','Jaleco branco, ideias brilhantes e muita curiosidade.',1,'m'],
+['#e8eef2','#ff5a5a','#f4f8fa','#1d4a6a','#cfd8de','#8d5a3b','Cientista Astronauta','Leva a investigação para além do planeta.',2,'me'],
+['#dbe9f2','#6be7e8','#2a1d1a','#cfe8f2','#6be7e8','#f1c9a5','Cientista Moderna','Pesquisa de ponta com muito estilo.',1,'m'],
+['#f3efe9','#7a3a2a','#9a4a2a','','#ffd166','#e0a47b','Pesquisadora','Anota cada detalhe e nunca deixa uma pista escapar.',1,'m'],
+['#5a6b3a','#a9c48a','#8a7a42','#6d5f31','#3f5230','#e0a47b','Bióloga','Explora a natureza em busca de descobertas.',0,'m'],
+['#f4f7f9','#59e08a','#3a2418','','#59e08a','#c68863','Médica','Cuida das pessoas com ciência e carinho.',1,'m'],
+['#7a2a3a','#f0d9a8','#3a2418','','#f0d9a8','#f1c9a5','Ada Lovelace','Homenagem à pioneira da programação.',1,'m'],
+['#2f3b33','#e8eef2','#8a6a4a','','#c9a97c','#f1c9a5','Marie Curie','Homenagem à pioneira da radioatividade.',1,'m'],
+['#eef3f6','#3a7bd5','#4a2f22','#cfe8f2','#3a7bd5','#f1c9a5','Rosalind Franklin','Homenagem à cientista da Fotografia 51 do DNA.',1,'m'],
+['#e8eef2','#6be7e8','#1f1512','#cfe8f2','#6be7e8','#8d5a3b','Katherine Johnson','Homenagem à matemática dos voos espaciais.',1,'m'],
+['#f3efe9','#d98fa0','#cfcfcf','','#d98fa0','#f1c9a5','Nise da Silveira','Homenagem à psiquiatra do Museu de Imagens do Inconsciente.',1,'m'],
+['#e8eef2','#ffd166','#1a1210','','#ffd166','#6b4630','Jaqueline Goes','Homenagem à biomédica que sequenciou o genoma do coronavírus.',1,'m'],
+['#4b3a7a','#b9a9cc','#3a2d63','#2a2048','#b9a9cc','#f1c9a5','Bertha Lutz','Homenagem à bióloga que lutou pelo voto feminino.',0,'m'],
+['#f4f7f9','#ff7ab0','#7a3a22','','#ff7ab0','#f1c9a5','Mayana Zatz','Homenagem à geneticista da USP.',1,'m'],
+['#e8f0f5','#35d0ff','#eef3f7','#35d0ff','#7a8794','#d5e4ee','Robô','Circuitos em dia e sempre pronto para ajudar.',3,'r'],
+['#2a2a36','#c05bff','#2f2f3d','#c05bff','#4a4a5a','#4a4a5a','Robô Avançado','Versão reforçada com sensores de última geração.',3,'r'],
+['#1f2a33','#59e08a','#bfff7a','#101010','#59e08a','#6fd45a','Alienígena','Veio de longe para resolver um mistério.',4,'a'],
+['#2b2f8a','#6be7e8','#6be7e8','#101010','#6be7e8','#5a7be8','Alienígena Biorraba','Brilha no escuro e enxerga o que ninguém vê.',4,'a'],
+['#c9d3dc','#35d0ff','#35d0ff','#101010','#35d0ff','#dfe6ec','Alienígena Espacial','Traje espacial e curiosidade interplanetária.',4,'ae'],
+['#3a3f48','#ff5a3a','#5a6470','#ff3a3a','#7a8794','#e0a47b','Ciborgue','Metade humano, metade máquina, 100% detetive.',3,'re']];
+const CATS=[['Todas','🎩',''],['Detetive','🕵','d'],['Mulheres','👩‍🔬','m'],['Robôs','🤖','r'],['Alienígenas','👽','a'],['Especiais','⭐','e']];
+let PV,G,modal=true,mode='lobby',fi=0,toast=0,last=0,T=0,wk=0,sd=0,ac=0,svT=0,AC,MG,NB,HM,pp=[],vOn=[0,0],lastPr='',lastSt='',TOUCH=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
+const K={},pad={x:0,y:0,cr:0},JS={x:0,y:0};
+// ===== Dados das cientistas (nome, 3 pistas, biografia) =====
+const SC=[
+['Marie Curie',['Ela estudou a radioatividade e ajudou a divulgar esse termo.','Descobriu os elementos polônio e rádio.','Foi a primeira pessoa a ganhar dois Prêmios Nobel, em Física (1903) e em Química (1911).'],'Marie Curie (1867-1934), nascida na Polônia, estudou a radioatividade com Pierre Curie e descobriu o polônio e o rádio. Ganhou o Nobel de Física em 1903 e o de Química em 1911. Na Primeira Guerra Mundial, ajudou a criar unidades móveis de raios X para atender feridos.'],
+['Rosalind Franklin',['Ela usava raios X para estudar a estrutura de moléculas.','A Fotografia 51, de 1952, mostrava o padrão de difração do DNA.','Seus dados ajudaram a propor a dupla hélice do DNA em 1953.'],'Rosalind Franklin (1920-1958), química e cristalógrafa britânica, usou difração de raios X para estudar o DNA. A Fotografia 51, feita em seu laboratório em 1952, foi importante para o modelo da dupla hélice de 1953. Ela também estudou a estrutura de carvões e de vírus.'],
+['Ada Lovelace',['Ela escreveu notas sobre a Máquina Analítica de Charles Babbage.','Em 1843, descreveu um passo a passo para calcular números de Bernoulli.','É lembrada como pioneira da programação.'],'Ada Lovelace (1815-1852), matemática inglesa, escreveu notas sobre a Máquina Analítica de Charles Babbage. Em 1843, descreveu um método passo a passo para calcular números de Bernoulli, visto por muitos como o primeiro programa de computador. Ela imaginou que máquinas poderiam manipular símbolos, e não só números.'],
+['Katherine Johnson',['Era matemática e trabalhou na NASA.','Calculou a trajetória do voo de Alan Shepard, em 1961.','A pedido de John Glenn, conferiu os cálculos da missão de 1962.'],'Katherine Johnson (1918-2020), matemática norte-americana da NASA, calculou trajetórias de voos espaciais, como o de Alan Shepard em 1961. Em 1962, John Glenn pediu que ela conferisse os cálculos do computador antes de sua órbita. Recebeu a Medalha Presidencial da Liberdade em 2015.'],
+['Nise da Silveira',['Foi psiquiatra e trabalhou no Rio de Janeiro.','Criticou o eletrochoque e a lobotomia.','Usou pintura e modelagem como cuidado e criou o Museu de Imagens do Inconsciente.'],'Nise da Silveira (1905-1999), psiquiatra alagoana, rejeitou tratamentos violentos como o eletrochoque e a lobotomia. Valorizou a pintura e a modelagem como forma de expressão e cuidado e criou o Museu de Imagens do Inconsciente, no Rio de Janeiro. Também defendeu o convívio com animais como coterapeutas.'],
+['Jaqueline Goes de Jesus',['É biomédica e pesquisadora brasileira.','Integrou a equipe que sequenciou o genoma do coronavírus no Brasil.','O sequenciamento foi feito em cerca de 48 horas, em fevereiro de 2020.'],'Jaqueline Goes de Jesus é biomédica e pesquisadora baiana. Em fevereiro de 2020, integrou a equipe que sequenciou o genoma do coronavírus no Brasil em cerca de 48 horas após o primeiro caso confirmado. O sequenciamento ajuda a entender como um vírus se espalha e muda.'],
+['Bertha Lutz',['Foi bióloga e estudou anfíbios no Museu Nacional.','Lutou pelo direito de voto das mulheres no Brasil.','Defendeu a igualdade entre mulheres e homens na conferência de 1945 que criou a ONU.'],'Bertha Lutz (1894-1976), bióloga brasileira, pesquisou anfíbios no Museu Nacional. Lutou pelo voto feminino, conquistado no Brasil em 1932, e participou da conferência de 1945, em São Francisco, que criou a ONU, defendendo a igualdade entre mulheres e homens.'],
+['Mayana Zatz',['É geneticista e professora da USP.','Dirige o Centro de Estudos do Genoma Humano e de Células-Tronco.','Pesquisa doenças genéticas, como as distrofias musculares.'],'Mayana Zatz é geneticista brasileira e professora da USP. Dirige o Centro de Estudos do Genoma Humano e de Células-Tronco e pesquisa doenças genéticas, como as distrofias musculares. Também atua na divulgação científica e no diálogo com famílias de pacientes.']];
+// Atributos ligados por sala: [país, área, feito, marca]
+const AT=[
+['Polônia','Radioatividade','Descobriu o polônio e o rádio','Dois Prêmios Nobel (Física e Química)'],
+['Reino Unido','Cristalografia de raios X','Fotografia 51 do DNA','Seus dados ajudaram a propor a dupla hélice'],
+['Reino Unido','Matemática e computação','Escreveu o passo a passo para a Máquina Analítica','É lembrada como pioneira da programação'],
+['Estados Unidos','Matemática e voos espaciais','Calculou a trajetória do voo de Alan Shepard','Conferiu os cálculos de John Glenn'],
+['Brasil','Psiquiatria','Criou o Museu de Imagens do Inconsciente','Criticou o eletrochoque e a lobotomia'],
+['Brasil','Biomedicina','Sequenciou o genoma do coronavírus no Brasil','Sequenciamento em cerca de 48 horas'],
+['Brasil','Biologia','Lutou pelo voto das mulheres no Brasil','Defendeu a igualdade na conferência que criou a ONU'],
+['Brasil','Genética','Dirige o Centro do Genoma Humano e de Células-Tronco','Pesquisa doenças genéticas, como distrofias musculares']];
+const LB=['Área','País','Feito','Marca'],AI=[1,0,2,3],QT=['a ÁREA de atuação','o PAÍS de nascimento','o principal FEITO','a MARCA que ficou na história'];
+const PZN=['Sequência de luzes','Sequência numérica','Letras embaralhadas','Linha do tempo','Painel de luzes'];
+const IT={card:['💳','Cartão de acesso','só funciona no leitor da porta do laboratório.'],key:['🔑','Chave','só abre a fechadura da porta do corredor.'],chip:['🔧','Peça de circuito','serve para ligar o computador do arquivo.']};
+const OB=['Ache o cartão, o código e responda o Quadro','Ache a 3ª pista, responda o Quadro e resolva o caso'];
+const HN=[['Procure um cartão de acesso escondido em um dos armários ou gaveteiros.','Leia a estante e o computador antigo para achar o código. Responda a pergunta do Quadro (errou? faça o puzzle da sala).','Com o cartão selecionado (Tab), interaja com a porta da direita e digite o código.'],
+['Examine os arquivos antigos para achar a 3ª pista.','Responda a pergunta do Quadro desta sala.','Com as 3 pistas e as 2 respostas ligadas (painel 📋), use a Máquina central e escolha a cientista.']];
+// ===== Salas: [id,tipo,rótulo,x,y,w,h] =====
+const R=[
+{n:'Laboratório abandonado',f:'#cdb48e',t:'#bda07a',w:'#8fa8cc',d:'#5d7396',o:[['nb','desk','Mesa de documentos',22,64,66,26],['pc0','pc','Computador antigo',108,56,40,30],['sh0','shelf','Estante de livros',170,44,62,36],['cab','cab','Armário de segurança',300,44,38,44],['dr','cab','Gaveteiro',32,150,32,34],['mic','mic','Microscópio na bancada',108,150,52,28],['rack','rack','Tubos borbulhando',230,168,38,28],['p1','plant','Planta carnívora',252,98,16,20],['p2','plant','Planta carnívora',344,178,16,20],['cab2','cab','Armário de arquivos',352,50,34,44],['dr2','cab','Gaveteiro velho',82,198,32,34],['cab3','cab','Armário de reagentes',300,180,38,44],['cab4','cab','Armário de ferramentas',190,106,34,40],['qb0','board','Quadro de perguntas',244,40,48,34]]},
+{n:'Sala central',f:'#9fb4c8',t:'#8aa1b8',w:'#33445e',d:'#1f2b40',o:[['ms','mach','Máquina central',164,64,72,60],['arq','cab','Arquivos antigos',52,50,50,40],['qb1','board','Quadro de perguntas',280,44,50,34],['p5','plant','Planta carnívora',70,168,16,20],['p6','plant','Planta carnívora',320,168,16,20],['dk5','cab','Armário de servidores',20,160,36,44],['dk6','cab','Armário de servidores',348,104,36,44]]}];
+R.forEach(m=>m.o=m.o.map(a=>({id:a[0],t:a[1],l:a[2],x:a[3],y:a[4],w:a[5],h:a[6]})));
+// ===== Som sintetizado =====
+const av=()=>{if(MG)MG.gain.value=CF.snd?CF.vol:0};
+function ai(){if(AC)return 1;try{AC=new(window.AudioContext||window.webkitAudioContext)();MG=AC.createGain();MG.connect(AC.destination);NB=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate);const d=NB.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+HM=AC.createGain();HM.gain.value=0;const o=AC.createOscillator(),f=AC.createBiquadFilter();o.type='sawtooth';o.frequency.value=55;f.frequency.value=160;o.connect(f);f.connect(HM);HM.connect(MG);o.start();av();return 1}catch(e){return 0}}
+function tn(f,t,d,ty,v,f2){const o=AC.createOscillator(),a=AC.createGain();o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);a.gain.setValueAtTime(.0001,t);a.gain.exponentialRampToValueAtTime(v,t+.02);a.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(a);a.connect(MG);o.start(t);o.stop(t+d+.05)}
+function nz(t,d,fr,v){const s=AC.createBufferSource(),f=AC.createBiquadFilter(),a=AC.createGain();s.buffer=NB;f.type='lowpass';f.frequency.value=fr;a.gain.setValueAtTime(v,t);a.gain.exponentialRampToValueAtTime(.001,t+d);s.connect(f);f.connect(a);a.connect(MG);s.start(t,0,d)}
+function snd(k){if(!CF.snd||!ai())return;if(AC.state=='suspended')AC.resume();const t=AC.currentTime;
+({step:()=>nz(t,.07,300+Math.random()*200,.35),click:()=>tn(520,t,.06,'triangle',.1,700),door:()=>{tn(140,t,.35,'sawtooth',.12,70);nz(t+.3,.12,600,.3)},item:()=>[523,659,784,1047].forEach((f,i)=>tn(f,t+i*.07,.2,'triangle',.13)),ok:()=>{tn(660,t,.12,'square',.07);tn(990,t+.1,.2,'square',.07)},bad:()=>{tn(300,t,.15,'sawtooth',.09,200);tn(220,t+.14,.22,'sawtooth',.09,150)},win:()=>[523,659,784,1047,784,1047,1319].forEach((f,i)=>tn(f,t+i*.11,.28,'triangle',.14)),steam:()=>nz(t,.9,2500,.25)})[k]?.()}
+// ===== Mensagens e diálogos (DOM) =====
+const ov=$('ov');
+function say(t,s){const e=$('ts');e.textContent=t;e.style.opacity=1;toast=3.4;if(s)snd(s)}
+function dlg(t,x,b,cl,keep){modal=true;lastPr='';$('pr').style.display='none';ov.classList.remove('h');const d=document.createElement('div');d.className='dlg';d.innerHTML='<h2></h2><p></p><div class="ch '+(cl||'')+'"></div>';d.children[0].textContent=t;d.children[1].textContent=x;b.forEach(o=>{const e=document.createElement('button');e.textContent=o[0];e.onclick=()=>{snd('click');o[1]()};d.children[2].append(e)});ov.replaceChildren(d);if(!keep)fi=0;foc()}
+const bt=()=>[...ov.querySelectorAll('button')];
+function foc(){const l=bt();fi=Math.max(0,Math.min(fi,l.length-1));l.forEach((b,i)=>b.classList.toggle('gf',i==fi));l[fi]&&l[fi].scrollIntoView({block:'nearest'})}
+function nav(d){const l=bt();if(l.length){fi=(fi+d+l.length)%l.length;foc();snd('click')}}
+const okb=()=>{const b=bt()[fi];b&&b.click()};
+function cl(){ov.classList.add('h');ov.replaceChildren();modal=false;if(mode!='play')lobby()}
+const msg=(t,x)=>dlg(t,x,[['OK',cl]]);
+const back=()=>mode=='play'?pause():lobby();
+// ===== Fluxo do jogo =====
+function newGame(){const r=n=>Math.floor(Math.random()*n),d=()=>1+r(9),o=shuf([0,1,2,3,4,5,6,7]);
+G={room:0,x:60,y:200,dir:'down',cr:false,t:0,hints:0,hl:0,hst:0,tgt:o[0],q:[1,2].map(i=>({s:o[i],k:r(3)})),door:[0,0],card:['cab','dr','mic','cab2','cab3','dr2','cab4'][r(7)],keyAt:['bx','bx2'][r(2)],chipAt:['gv','gv2','gv3'][r(3)],an:['',''],pen:0,err:0,code:[d(),d(),d()],pw:[d(),d(),d()],tub:shuf(['🟢','🔵','🔴','🟡']).slice(0,3),inv:[],sel:'',f:{},cl:[0,0,0],vis:[1,0]}}
+const save=()=>{if(mode=='play'&&!G.won)sv('mmc2g',G)};
+const saved=()=>{try{return JSON.parse(localStorage.getItem('mmc2g'))}catch(e){return null}};
+const stg=()=>G.door.filter(x=>x).length;
+function play(){mode='play';document.body.classList.add('pl');cl();if(TOUCH&&!document.fullscreenElement)fs();save()}
+const addb=(box,t,f,c)=>{const e=document.createElement('button');e.textContent=t;if(c)e.className=c;e.onclick=()=>{snd('click');f()};box.append(e);return e};
+function skinAlbum(ci=0){modal=true;ov.classList.remove('h');const d=document.createElement('div');d.className='al';
+d.innerHTML='<div class="hd"><b>ÁLBUM DE SKINS</b><span>Escolha e personalize seu detetive!</span><em></em></div><div class="lf"><div class="cs"></div><div class="sd2"><b></b><span></span><canvas class="pvc" width="28" height="30"></canvas><div class="pad"></div><div class="eq">✓ Equipado</div></div></div><div class="gr"></div><div class="ft"><span>Toque numa skin para equipar.</span></div>';
+d.querySelector('em').textContent='Skins: '+COAT.length;const o=COAT[CF.coat];d.querySelector('.sd2 b').textContent=o[6];d.querySelector('.sd2 span').textContent=o[7];
+const cs=d.querySelector('.cs'),gr=d.querySelector('.gr');
+CATS.forEach((c,k)=>addb(cs,c[1]+' '+c[0],()=>{fi=k;skinAlbum(k)},k==ci?'on':''));
+COAT.forEach((o,i)=>{if(CATS[ci][2]&&!o[9].includes(CATS[ci][2]))return;const e=addb(gr,'',()=>{CF.coat=i;sv('mmc2c',CF);skinAlbum(ci)},'cd'+(i==CF.coat?' on':''));e.innerHTML='<canvas width="28" height="30"></canvas><b></b><small></small>';e.children[1].textContent=o[6];e.children[2].textContent=i==CF.coat?'✓ Equipado':'Disponível';drp(e.children[0],i,0)});
+addb(d.querySelector('.ft'),'← Voltar',lobby);PV=d.querySelector('.sd2 canvas');ov.replaceChildren(d);foc()}
+const QRL=(()=>{const D={},C={},R=n=>{n=n.split('/').pop();if(!C[n]){const m={exports:{}};C[n]=m;D[n](m,m.exports,R)}return C[n].exports};
+D.QRMode=function(module,exports,require){module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+};
+D.QRErrorCorrectLevel=function(module,exports,require){module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+};
+D.QRMaskPattern=function(module,exports,require){module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+};
+D.QRMath=function(module,exports,require){var QRMath = {
+	glog : function(n) {
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		return QRMath.LOG_TABLE[n];
+	},
+	gexp : function(n) {
+		while (n < 0) {
+			n += 255;
+		}
+		while (n >= 256) {
+			n -= 255;
+		}
+		return QRMath.EXP_TABLE[n];
+	},
+	EXP_TABLE : new Array(256),
+	LOG_TABLE : new Array(256)
+};
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+module.exports = QRMath;
+};
+D.QRPolynomial=function(module,exports,require){var QRMath = require('./QRMath');
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+	var offset = 0;
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+QRPolynomial.prototype = {
+	get : function(index) {
+		return this.num[index];
+	},
+	getLength : function() {
+		return this.num.length;
+	},
+	multiply : function(e) {
+		var num = new Array(this.getLength() + e.getLength() - 1);
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+		return new QRPolynomial(num, 0);
+	},
+	mod : function(e) {
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+		var num = new Array(this.getLength() );
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+module.exports = QRPolynomial;
+};
+D.QR8bitByte=function(module,exports,require){var QRMode = require('./QRMode');
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+QR8bitByte.prototype = {
+	getLength : function() {
+		return this.data.length;
+	},
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+module.exports = QR8bitByte;
+};
+D.QRBitBuffer=function(module,exports,require){function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+QRBitBuffer.prototype = {
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	getLengthInBits : function() {
+		return this.length;
+	},
+	putBit : function(bit) {
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+		this.length++;
+	}
+};
+module.exports = QRBitBuffer;
+};
+D.QRRSBlock=function(module,exports,require){var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+QRRSBlock.RS_BLOCK_TABLE = [
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+	var length = rsBlock.length / 3;
+	var list = [];
+	for (var i = 0; i < length; i++) {
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	return list;
+};
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+module.exports = QRRSBlock;
+};
+D.QRUtil=function(module,exports,require){var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+var QRUtil = {
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+    getBCHDigit : function(data) {
+        var digit = 0;
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+        return digit;
+    },
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+    getMask : function(maskPattern, i, j) {
+        switch (maskPattern) {
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+        var a = new QRPolynomial([1], 0);
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+        return a;
+    },
+    getLengthInBits : function(mode, type) {
+        if (1 <= type && type < 10) {
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+        } else if (type < 27) {
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+        } else if (type < 41) {
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+    getLostPoint : function(qrCode) {
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount; col++) {
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+                for (var r = -1; r <= 1; r++) {
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+                    for (var c = -1; c <= 1; c++) {
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+        var darkCount = 0;
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+        return lostPoint;       
+    }
+};
+module.exports = QRUtil;
+};
+D.QRCode=function(module,exports,require){var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+QRCode.prototype = {
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	make : function() {
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	makeImpl : function(test, maskPattern) {
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		for (var row = 0; row < this.moduleCount; row++) {
+			this.modules[row] = new Array(this.moduleCount);
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+		this.mapData(this.dataCache, maskPattern);
+	},
+	setupPositionProbePattern : function(row, col)  {
+		for (var r = -1; r <= 7; r++) {
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			for (var c = -1; c <= 7; c++) {
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	getBestMaskPattern : function() {
+		var minLostPoint = 0;
+		var pattern = 0;
+		for (var i = 0; i < 8; i++) {
+			this.makeImpl(true, i);
+			var lostPoint = QRUtil.getLostPoint(this);
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+		return pattern;
+	},
+	createMovieClip : function(target_mc, instance_name, depth) {
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+		this.make();
+		for (var row = 0; row < this.modules.length; row++) {
+			var y = row * cs;
+			for (var col = 0; col < this.modules[row].length; col++) {
+				var x = col * cs;
+				var dark = this.modules[row][col];
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		return qr_mc;
+	},
+	setupTimingPattern : function() {
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	setupPositionAdjustPattern : function() {
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		for (var i = 0; i < pos.length; i++) {
+			for (var j = 0; j < pos.length; j++) {
+				var row = pos[i];
+				var col = pos[j];
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				for (var r = -2; r <= 2; r++) {
+					for (var c = -2; c <= 2; c++) {
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	setupTypeNumber : function(test) {
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	setupTypeInfo : function(test, maskPattern) {
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+		for (var v = 0; v < 15; v++) {
+			mod = (!test && ( (bits >> v) & 1) === 1);
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+		for (var h = 0; h < 15; h++) {
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+		this.modules[this.moduleCount - 8][8] = (!test);
+	},
+	mapData : function(data, maskPattern) {
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+			if (col === 6) col--;
+			while (true) {
+				for (var c = 0; c < 2; c++) {
+					if (this.modules[row][col - c] === null) {
+						var dark = false;
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+						if (mask) {
+							dark = !dark;
+						}
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+				row += inc;
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+	}
+};
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	var buffer = new QRBitBuffer();
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+	while (true) {
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+QRCode.createBytes = function(buffer, rsBlocks) {
+	var offset = 0;
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	for (var r = 0; r < rsBlocks.length; r++) {
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		dcdata[r] = new Array(dcCount);
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+	}
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+	var data = new Array(totalCodeCount);
+	var index = 0;
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+	return data;
+};
+module.exports = QRCode;
+};
+return{QRCode:R('QRCode'),L:R('QRErrorCorrectLevel').L}})();
+const QRD='';
+const QRU=()=>{try{const u=localStorage.getItem('mmc2u');if(u)return u}catch(e){}const h=location.href.split('#')[0];return/^https?:/.test(h)&&!/claude/i.test(location.hostname)?h:(QRD||h)};
+const QRM=()=>{try{return localStorage.getItem('mmc2m')=='u'?'u':'c'}catch(e){return'c'}};
+const QRP=u=>{if(QRM()=='c'&&/^https?:/.test(u))try{const x=new URL(u);return'intent://'+x.host+x.pathname+x.search+'#Intent;scheme='+x.protocol.slice(0,-1)+';package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(u)+';end'}catch(e){}return u};
+function qrDraw(c,t,sc){const q=new QRL.QRCode(-1,QRL.L);q.addData(t.replace(/[^\x00-\x7f]/g,ch=>encodeURIComponent(ch)));q.make();const n=q.getModuleCount(),m=q.modules,z=n+4,x=c.getContext('2d');c.width=c.height=z*sc;x.fillStyle='#fff';x.fillRect(0,0,z*sc,z*sc);x.fillStyle='#000';for(let r=0;r<n;r++)for(let k=0;k<n;k++)if(m[r][k])x.fillRect((k+2)*sc,(r+2)*sc,sc,sc)}
+function qrShow(){modal=true;ov.classList.remove('h');const u=QRU(),ok=/^https?:/.test(u),ch=QRM()=='c',d=document.createElement('div');d.className='qrm';
+d.innerHTML='<h2>📱 Jogue pelo celular</h2><canvas class="qrbig"></canvas><p class="qu"></p><div class="qb"></div>';
+const cv2=d.querySelector('canvas'),b=d.querySelector('.qb');let has=0;try{has=localStorage.getItem('mmc2u')}catch(e){}
+d.querySelector('.qu').textContent=ok?(ch?'Escaneie para abrir direto no Chrome (Android). No iPhone, use o modo “qualquer navegador”.':'Escaneie para abrir no navegador do celular.')+' Link: '+u:'⚠ O jogo está aberto como arquivo local. Toque em “Trocar link” e cole o endereço onde ele está hospedado para o QR funcionar.';
+if(ok){try{qrDraw(cv2,QRP(u),8)}catch(e){cv2.style.display='none';d.querySelector('.qu').textContent='Link muito longo para virar QR code. Use “Trocar link” com um endereço mais curto.'}}else cv2.style.display='none';
+addb(b,'🌐 '+(ch?'Modo: Chrome (Android)':'Modo: qualquer navegador'),()=>{try{localStorage.setItem('mmc2m',ch?'u':'c')}catch(e){}qrShow()});
+addb(b,'✏ Trocar link',()=>{const v=prompt('Cole o link do jogo (https://...)',ok?u:'');if(v&&v.trim()){try{localStorage.setItem('mmc2u',v.trim())}catch(e){}}qrShow()});
+if(has)addb(b,'↺ Link automático',()=>{try{localStorage.removeItem('mmc2u')}catch(e){}qrShow()});
+addb(b,'← Voltar',lobby);ov.replaceChildren(d);foc()}
+function drp(c,k,st,tr){const p=c.getContext('2d'),o=g;p.clearRect(0,0,28,30);g=p;pl({x:11,y:27,d:'down',cr:0,s:st,k,tr});g=o}
+function lobby(){mode='lobby';lastPr='';$('pr').style.display='none';document.body.classList.remove('pl');const sv0=saved();
+modal=true;ov.classList.remove('h');fi=0;
+const d=document.createElement('div');d.className='lb';
+d.innerHTML='<div class="lm"><div class="tt"><i>🔍</i><div><span class="t1">O MISTÉRIO DAS</span><span class="t2">MULHERES DA CIÊNCIA</span></div><i>⚛</i></div><p class="sub"></p><div class="lc"></div></div><div class="ct"><canvas class="pvc" width="28" height="30"></canvas><div class="pad"></div></div><div class="sp"><h3>SKINS</h3><div class="sg"></div><div class="pg"></div><div class="sd"><b></b><span></span></div></div><div class="bh">🎮 Jogue com teclado, toque ou controle de PS4</div><div class="bv"></div>';
+d.querySelector('.sub').textContent='Grandes mentes. Descobertas reais. Um mistério para ser resolvido.'+(AB.best?'  '+'⭐'.repeat(AB.best):'');
+const add=(box,t,f,c)=>{const e=document.createElement('button');e.textContent=t;if(c)e.className=c;e.onclick=()=>{snd('click');f()};box.append(e);return e};
+const lc=d.querySelector('.lc');
+add(lc,'▶ Jogar',()=>{newGame();play()},'lj');
+if(sv0&&sv0.door&&sv0.door.length==2&&sv0.an&&sv0.an.length==2)add(lc,'⏩ Continuar',()=>{G=sv0;G.an=G.an||['',''];G.pen=G.pen||0;G.err=G.err||0;play()});
+add(lc,'⚙ Opções',()=>cfg(0));
+add(lc,'📖 Manual do jogo',man);
+add(lc,'🧬 Álbum de Cientistas',alb);
+add(lc,'🚪 Sair',()=>{try{window.close()}catch(e){}dlg('👋 Até logo!','Obrigado por jogar! Se a aba não fechou sozinha, é só fechá-la.',[['← Voltar',lobby]])});
+const sg=d.querySelector('.sg'),pgE=d.querySelector('.pg'),nm=d.querySelector('.sd b'),ds=d.querySelector('.sd span'),NP=Math.ceil(COAT.length/6);let pi=Math.floor(CF.coat/6);
+function rs(){sg.replaceChildren();for(let i=pi*6;i<Math.min(COAT.length,pi*6+6);i++){const e=document.createElement('button'),c=document.createElement('canvas');c.width=28;c.height=30;e.className='sk'+(i==CF.coat?' on':'');e.title=COAT[i][6];e.append(c);e.onclick=()=>{snd('click');CF.coat=i;sv('mmc2c',CF);rs()};sg.append(e);drp(c,i,0)}
+pgE.replaceChildren();add(pgE,'◀',()=>{pi=(pi+NP-1)%NP;rs()});const t=document.createElement('span');t.textContent=(pi+1)+'/'+NP;pgE.append(t);add(pgE,'▶',()=>{pi=(pi+1)%NP;rs()});
+nm.textContent=COAT[CF.coat][6];ds.textContent=COAT[CF.coat][7];foc()}
+rs();add(d.querySelector('.sp'),'🎨 Álbum de skins',()=>{fi=0;skinAlbum()},'ab3');
+const bv=d.querySelector('.bv'),mu=add(bv,CF.snd?'🔊':'🔇',()=>{CF.snd^=1;sv('mmc2c',CF);av();mu.textContent=CF.snd?'🔊':'🔇'}),r=document.createElement('input');
+r.type='range';r.min=0;r.max=100;r.value=Math.round(CF.vol*100);r.oninput=()=>{CF.vol=r.value/100;if(CF.vol>0)CF.snd=1;sv('mmc2c',CF);av();mu.textContent=CF.snd?'🔊':'🔇'};bv.append(r);add(bv,'⛶',fs);
+PV=d.querySelector('canvas');
+const qb=document.createElement('button'),qc=document.createElement('canvas');qb.className='qrc';qb.title='QR code do jogo';qb.setAttribute('aria-label','Abrir QR code do jogo');qb.append(qc);qb.onclick=()=>{snd('click');qrShow()};d.append(qb);
+try{const u=QRU();if(/^https?:/.test(u))qrDraw(qc,QRP(u),3);else{qb.textContent='📱 QR'}}catch(e){qb.textContent='📱 QR'}
+ov.replaceChildren(d);foc()}
+function pause(){dlg('☰ Menu','O progresso é salvo automaticamente.',[['▶ Continuar',cl],['🎒 Inventário',inv],['🗺 Mapa',map],['📋 Painel de pistas',panel],['💡 Dica',hint],['📖 Manual',man],['⚙ Configurações',()=>cfg(0)],['↩ Voltar ao menu',()=>{save();lobby()}]])}
+function man(){dlg('📖 Manual do detetive','🎯 Descubra qual cientista é a investigada reunindo 3 pistas em 2 salas.\n\n🕹 ANDAR: WASD/setas · celular: direcional · PS4: analógico esquerdo.\n🔍 INTERAGIR: E ou Espaço · botão AGIR · X.\n⬇ AGACHAR (segure): Ctrl ou C · botão AGACHAR · Círculo. Agachar passa por vãos baixos.\n🎒 INVENTÁRIO: Tab · botão 🎒 · Triângulo. Selecione um item e interaja com a porta ou o computador correto.\n☰ MENU: Esc · botão ☰ · Options.\n📋 QUADRO DE PERGUNTAS: cada sala tem um, com 1 pergunta fácil. As respostas se ligam entre si e no enigma final você junta todas. Responder libera a saída da sala.\n❌ ERROU? Resolva o puzzle da sala (memorizar a sequência de cores) para tentar de novo.\n🗄 Os itens ficam em armários e caixas diferentes a cada partida: vasculhe todos!\n🧪 PUZZLES: leia etiquetas, livros e computadores. O painel 📋 organiza as pistas e o mapa 🗺 mostra as salas e objetivos.\n💡 DICAS: três níveis por etapa. Muitas dicas reduzem as estrelas.\n⭐ ESTRELAS: 3 com poucas dicas (e rapidez, se o cronômetro estiver ligado).\n💾 Salvamento automático.',[['← Voltar',back]])}
+function cfg(k){const V=[.35,.7,1],vi=CF.vol<.5?0:CF.vol<.9?1:2,o=(i,l,f)=>[l,()=>{f();sv('mmc2c',CF);av();ui();cfg(i)}],on=v=>v?'ligado':'desligado';
+fi=k;dlg('⚙ Configurações','As escolhas ficam salvas neste aparelho.',[o(0,'🔊 Som: '+on(CF.snd),()=>CF.snd^=1),o(1,'🎚 Volume: '+['baixo','médio','alto'][vi],()=>CF.vol=V[(vi+1)%3]),o(2,'🌗 Alto contraste: '+on(CF.hc),()=>CF.hc^=1),o(3,'🔠 Texto maior: '+on(CF.big),()=>CF.big^=1),o(4,'🐢 Reduzir animações: '+on(CF.calm),()=>CF.calm^=1),o(5,'⏱ Cronômetro: '+on(CF.tm),()=>CF.tm^=1),o(6,'📱 Controles de toque: '+on(CF.tc),()=>CF.tc^=1),o(7,'🧥 Skin: '+COAT[CF.coat][6],()=>CF.coat=(CF.coat+1)%COAT.length),o(8,'🕹 Controle: '+(CF.an?'analógico':'botões'),()=>CF.an^=1),o(9,'👁 Transparência dos controles: '+['100%','70%','50%','30%'][CF.ot|0],()=>CF.ot=((CF.ot|0)+1)%4),['← Voltar',back]],'',true)}
+function alb(){dlg('🧬 Álbum de Cientistas','Desbloqueie acertando desafios e resolvendo casos. '+AB.al.length+'/8',[...SC.map((s,i)=>AB.al.includes(i)?['🧬 '+s[0],()=>dlg(s[0],s[2],[['← Álbum',alb]])]:['🔒 ???',()=>dlg('🔒 Bloqueada','Resolva desafios dos laboratórios ou o caso final para conhecer esta cientista.',[['← Álbum',alb]])]),['← Voltar',back]])}
+const unl=s=>{if(!AB.al.includes(s)){AB.al.push(s);sv('mmc2a',AB)}};
+const info=i=>i[0]=='d'?['📄','Documento '+(+i[1]+1),SC[G.tgt][1][+i[1]]]:[IT[i][0],IT[i][1],'Uso: '+IT[i][2]];
+function inv(){if(!G.inv.length)return dlg('🎒 Inventário','Vazio. Examine objetos para coletar cartões, chaves, documentos e peças.',[['Fechar',cl]]);
+dlg('🎒 Inventário',G.sel?info(G.sel)[1]+': '+info(G.sel)[2]+'\n\nPerto da porta, computador ou equipamento, use AGIR para usar o item.':'Toque num item para selecioná-lo. Depois use-o perto do lugar certo.',[...G.inv.map(i=>[(G.sel==i?'✅ ':'')+info(i)[0]+' '+info(i)[1],()=>{G.sel=G.sel==i?'':i;inv()}]),['Fechar',cl]],'',true)}
+function map(){const o=R.map((m,r)=>{const ok=r==0||G.door[r-1];return ok?(r==G.room?'📍 ':'• ')+m.n+(r<1?(G.door[r]?' · saída 🔓':' · saída 🔒'):'')+((r<1?!G.door[r]:!G.won)?'\n    ▸ '+HN[r][0]:''):'❓ Sala trancada'});dlg('🗺 Mapa',o.join('\n'),[['Fechar',cl]])}
+function panel(){const f=G.f,c=G.code;dlg('📋 Painel de pistas','🚪 Código da porta do laboratório: '+[f.sh?c[0]:'?',f.sh?c[1]:'?',f.pc?c[2]:'?'].join(' ')+'\n🔗 Respostas ligadas: '+LB.slice(0,2).map((l,k)=>l+' '+(G.an[k]||'?')).join(' · ')+'\n\n🕵 Pistas da cientista:\n'+[0,1,2].map(k=>G.cl[k]?'✔ '+SC[G.tgt][1][k]:'✖ ainda não encontrada').join('\n'),[['Fechar',cl]])}
+function hint(){const st=stg();if(st!=G.hst){G.hst=st;G.hl=0}const l=Math.min(G.hl,2);G.hints++;G.hl++;msg('💡 Dica '+(l+1)+'/3',HN[st][l])}
+// ===== Interações =====
+const rm=i=>{G.inv=G.inv.filter(x=>x!=i);G.sel=''};
+const give=(i,m)=>{G.inv.push(i);snd('item');say(m);save()};
+const itemAt=id=>{const f=G.f,op=f.op||{};if(!op[id])return '';if(id==(G.keyAt||'bx'))return f.key?'':'key';if(id==(G.chipAt||'gv'))return f.chip?'':'chip';return G.card==id&&!f.card?'card':''};
+const take=it=>{G.f[it]=1;G.inv.push(it);snd('item');save();dlg(IT[it][0]+' Item encontrado!',IT[it][1]+' foi para o inventário (Tab).\n\nUso: '+IT[it][2],[['OK',cl]])};
+const search=(o,m1,m0)=>{const op=G.f.op=G.f.op||{},it=itemAt(o.id);if(it)return take(it);if(op[o.id])return say('Já vasculhado: nada mais aqui.');op[o.id]=1;snd('click');say(itemAt(o.id)?m1:m0)};
+const doc=k=>{if(!G.cl[k]){G.cl[k]=1;G.inv.push('d'+k)}};
+const opn=r=>{G.door[r]=1;snd('door');say('🔓 Porta aberta!');save()};
+function kp(t,x,sy,n,ans,ok,v=[],rt){dlg(t,x+'\n\n'+v.concat(Array(n-v.length).fill('·')).join(' '),[...sy.map(s=>[s,()=>{const w=[...v,s];if(w.length<n)return kp(t,x,sy,n,ans,ok,w,rt);if(w.join('')===ans){cl();ok()}else{say('✖ Combinação incorreta.','bad');if(rt){fi=0;return rt()}kp(t,x,sy,n,ans,ok,[],rt)}}]),['⌫',()=>kp(t,x,sy,n,ans,ok,v.slice(0,-1),rt)],['✖ Sair',cl]],'kp',true)}
+// ===== Puzzles de penalidade (um diferente por sala) =====
+const WD=[['CELULA','unidade básica da vida'],['GENOMA','conjunto completo de genes'],['ENZIMA','proteína que acelera reações'],['ATOMO','menor parte de um elemento químico'],['NEURONIO','célula do sistema nervoso'],['PROTEINA','molécula feita de aminoácidos']];
+const BD=[['Ada',1815],['Curie',1867],['Lutz',1894],['Da Silveira',1905],['Johnson',1918],['Franklin',1920]];
+function wrong(go){G.pen=1;G.err=(G.err||0)+1;snd('bad');save();dlg('✖ Resposta errada','Para tentar de novo, resolva o puzzle desta sala: '+PZN[0]+'.',[['🧩 Resolver puzzle',()=>pz(go)],['Sair',cl]])}
+function pz(go){const done=()=>{G.pen=0;save();snd('ok');say('🧩 Puzzle resolvido! Tente a pergunta de novo.');go()},rt=()=>{fi=0;pz(go)};fi=0;pzSeq(done,rt)}
+function pzSeq(done,rt){const sy=['🔴','🟢','🔵','🟡'],s=Array.from({length:4},()=>sy[Math.floor(Math.random()*4)]);
+dlg('🧩 Sequência de luzes','As luzes do laboratório piscam nesta ordem:\n\n'+s.join('  ')+'\n\nMemorize e toque em “Pronto”. A sequência vai sumir!',[['✔ Pronto',()=>kp('🧩 Repita a sequência','Toque nas cores na mesma ordem. Errou? A sequência muda.',sy,4,s.join(''),done,[],rt)],['Sair',cl]])}
+function pzNum(done,rt){const r=n=>Math.floor(Math.random()*n),t=r(4),a=1+r(5),d=2+r(5),q=[0,1,2,3,4,5].map(i=>t==0?a*3+d*i:t==1?a*2**i:t==2?(a+i)**2:0);
+if(t==3){q[0]=a;q[1]=d;for(let i=2;i<6;i++)q[i]=q[i-1]+q[i-2]}
+const ans=q[5],S=new Set([ans]);while(S.size<4){const v=ans+(r(11)-5)*(t==1?2:1);if(v>0)S.add(v)}
+dlg('🧩 Sequência numérica','O painel do corredor trava até completar a sequência:\n\n'+q.slice(0,5).join(' · ')+' · ?\n\nQual número vem depois?',[...shuf([...S]).map(v=>[String(v),()=>v==ans?done():(snd('bad'),say('✖ Número errado. O painel gerou outra sequência.','bad'),rt())]),['Sair',cl]])}
+function pzWord(done,rt){const w=WD[Math.floor(Math.random()*WD.length)];let l=shuf(w[0].split(''));if(l.join('')==w[0])l=l.reverse();
+kp('🧩 Letras embaralhadas','Monte a palavra de ciência com estas letras.\nDica: '+w[1]+'.',l,w[0].length,w[0],done,[],rt)}
+function pzTime(done,rt){const b=shuf(BD).slice(0,4),o=b.slice().sort((x,y)=>x[1]-y[1]);
+kp('🧩 Linha do tempo','Documentos soltos do arquivo. Ordene pelo nascimento, do mais antigo ao mais recente:\n'+b.map(x=>x[0]+' ('+x[1]+')').join('\n'),shuf(b.map(x=>x[0])),4,o.map(x=>x[0]).join(''),done,[],rt)}
+function pzLights(done){let s=Array(9).fill(0);const tg=i=>{const x=i%3,y=Math.floor(i/3);[[0,0],[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const X=x+a,Y=y+b;if(X>=0&&X<3&&Y>=0&&Y<3)s[Y*3+X]^=1})};
+do{s.fill(0);for(let i=0;i<9;i++)if(Math.random()<.45)tg(i)}while(!s.some(x=>x));const s0=s.slice();
+const draw=()=>dlg('🧩 Painel de luzes','Apague todas as luzes 🟨. Tocar numa luz muda ela e as vizinhas (cima, baixo, esquerda, direita).',[...s.map((v,i)=>[v?'🟨':'⬛',()=>{tg(i);if(!s.some(x=>x))return done();draw()}]),['↺ Reiniciar',()=>{s=s0.slice();draw()}],['✖ Sair',cl]],'g3',true);fi=0;draw()}
+// ===== Quadro de perguntas ligadas (uma por sala) =====
+function link(r,lb){const T=G.tgt,k=r;if(G.an[k])return msg(lb,'Já respondida: '+LB[k]+' = '+G.an[k]);
+if(!G.cl[0])return msg(lb,'Você ainda não tem nenhuma pista da cientista. Examine a mesa de documentos primeiro.');
+if(G.pen)return pz(()=>link(r,lb));
+const i=AI[k],ok=AT[T][i],pool=[...new Set(AT.map(a=>a[i]).concat(i==0?['França','Alemanha','Itália']:[]))].filter(x=>x!=ok),o=shuf([ok,...shuf(pool).slice(0,2)]);
+const kn=G.cl.map((c,j)=>c?(j+1)+'. '+SC[T][1][j]:'').filter(x=>x).join('\n');
+dlg('📋 '+lb,'Pistas reunidas:\n'+kn+'\n\nPensando na cientista investigada, qual é '+QT[k]+'?',[...o.map(x=>[x,()=>{if(x==ok){G.an[k]=ok;snd('ok');save();msg('✔ Resposta certa!',LB[k]+': '+ok+'\n\n'+(r<1?'A saída da sala foi liberada.':'Agora use a Máquina central.'))}else wrong(()=>link(r,lb))}]),['Sair',cl]])}
+function quiz(i,lb){const f=G.f,key=['mi','dna'][i],{s,k}=G.q[i];if(f[key])return msg(lb,'Desafio resolvido: '+SC[s][0]+'.\n“'+SC[s][1][k]+'”');if(G.pen)return pz(()=>quiz(i,lb));
+const o=shuf([s,...shuf([0,1,2,3,4,5,6,7].filter(x=>x!=s)).slice(0,2)]);
+dlg('🔬 '+lb,'Uma etiqueta no equipamento diz:\n“'+SC[s][1][k]+'”\n\nDe qual cientista se trata?',o.map(x=>[SC[x][0],()=>{if(x==s){f[key]=1;unl(s);snd('ok');save();msg('✔ Correto!','Era '+SC[s][0]+'. Ela foi adicionada ao Álbum de Cientistas.')}else wrong(()=>quiz(i,lb))}]))}
+function door(){const r=G.room,f=G.f,s=G.sel;if(G.door[r])return say('A porta já está aberta.');if(!G.an[r])return say('🔒 Responda o Quadro de perguntas desta sala para liberar a saída.','bad');
+if(r==0){if(!f.cd){if(s!='card')return say('🔒 Leitor de cartão: precisa do cartão de acesso. Abra o inventário (Tab) e selecione-o.','bad');f.cd=1;rm('card');snd('ok');say('Cartão aceito! Digite o código.')}
+return kp('🔒 Teclado da porta','Código de 3 dígitos. Pistas na estante e no computador.','1234567890'.split(''),3,G.code.join(''),()=>opn(0))}
+if(r==1){if(s!='key')return say('🔒 Porta trancada. Precisa de uma chave (selecione no inventário).','bad');rm('key');return opn(1)}
+if(r==2){if(!f.data)return say('🔒 Porta bloqueada. Libere os dados secretos no computador de dados.','bad');return opn(2)}
+say('🔒 Porta com senha. Use o computador do arquivo.','bad')}
+function final(){if(G.pen)return pz(final);const s=G.tgt,o=shuf([s,...shuf([0,1,2,3,4,5,6,7].filter(x=>x!=s)).slice(0,2)]);
+dlg('🔐 Enigma final','Junte as 2 respostas dos Quadros e as 3 pistas:\n\n'+LB.slice(0,2).map((l,k)=>'🔗 '+l+': '+G.an[k]).join('\n')+'\n\n🕵 Pistas:\n'+SC[s][1].map((c,k)=>(k+1)+'. '+c).join('\n')+'\n\nQuem é a cientista investigada?',[...o.map(x=>[SC[x][0],()=>x==s?win():wrong(final)]),['📋 Painel',panel],['Sair',cl]])}
+function win(){G.won=1;const s=3-(G.hints>3)-(G.hints>8)-(CF.tm&&G.t>840?1:0)-((G.err||0)>6?1:0),st=Math.max(1,s);AB.best=Math.max(AB.best,st);unl(G.tgt);sv('mmc2a',AB);try{localStorage.removeItem('mmc2g')}catch(e){}snd('win');
+dlg('🏆 Caso solucionado!','A cientista era '+SC[G.tgt][0]+'!\n\n'+SC[G.tgt][2]+'\n\nClassificação: '+'⭐'.repeat(st)+' · Dicas usadas: '+G.hints+' · Erros: '+(G.err||0)+' · Tempo: '+fmt(G.t),[['↻ Jogar de novo',()=>{newGame();play()}],['Menu',lobby]]);const c=document.createElement('canvas');c.width=28;c.height=30;c.className='pvc';const dd=ov.querySelector('.dlg');dd.insertBefore(c,dd.querySelector('.ch'));drp(c,CF.coat,0,1)}
+const fmt=s=>Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');
+function use(o){const f=G.f,s=G.sel,P=G.pw,ac_=o.id=='door'?['card','key'][G.room]||'':o.id=='pc3'?'chip':'';
+if(s&&IT[s]&&ac_!=s&&(ac_||o.t=='door'||o.t=='pc'||o.t=='mach'||o.t=='dna'||o.id=='tub'||o.id=='mi'))return say('✖ '+IT[s][1]+' não pode ser usado em '+o.l+': '+IT[s][2]+' Guarde-o no inventário (Tab).','bad');
+const sc=SC[G.tgt][1];
+if(o.id.startsWith('dk'))return search(o,'','Você vasculhou: só pastas e papéis antigos.');
+switch(o.id){
+case 'qb0':case 'qb1':case 'qb2':case 'qb3':return link(+o.id[2],o.l);
+case 'door':return door();
+case 'cab':case 'dr':case 'mic':case 'cab2':case 'cab3':case 'cab4':case 'dr2':return search(o,'✨ Algo brilha lá dentro: um cartão! Interaja de novo para pegar.','Você vasculhou: só papéis e equipamentos.');
+case 'nb':f.nb=1;doc(0);save();return msg('📓 Mesa de documentos','Caderno de anotações da investigação.\n\nRelatório recolhido (Documento 1): '+sc[0]);
+case 'pc0':f.pc=1;doc(1);save();return msg('💻 Computador antigo','Mensagem na tela: “O último número do código da porta é '+G.code[2]+'.”\n\nRelatório recolhido (Documento 2): '+sc[1]);
+case 'sh0':f.sh=1;return msg('📚 Estante de livros','Um bilhete entre os livros: “Código da porta: '+G.code[0]+' '+G.code[1]+' e um terceiro número no computador.”');
+case 'rack':return msg('🧪 Tubos','Um experimento antigo. As bolhas mostram que o equipamento ainda funciona.');
+case 'bx':case 'bx2':return search(o,'✨ A caixa abriu: tem uma chave dourada! Interaja de novo para pegar.','A caixa está vazia.');
+case 'mi':return quiz(0,'Microscópio de pesquisa');
+case 'dna':return quiz(1,'Modelo de DNA');
+case 'bk':f.ord=1;return msg('📚 Livros de pesquisa','Um marcador de página diz: “Ordem dos tubos: '+G.tub.join(' ')+'”');
+case 'tub':if(f.tb)return say('Tubos já organizados.');if(!f.ord)return msg('🧪 Tubos de ensaio','Quatro cores e nenhuma ordem conhecida. Procure a ordem nos livros de pesquisa.');return kp('🧪 Tubos de ensaio','Monte a sequência de 3 cores na ordem correta.',['🟢','🔵','🔴','🟡'],3,G.tub.join(''),()=>{f.tb=1;snd('ok');save();msg('✔ Reação correta!','A mistura reagiu como esperado. Método e observação cuidadosa são a base da ciência.')});
+case 'pc2':{const n=[f.mi,f.dna,f.tb].filter(x=>x).length;if(n<3)return msg('💻 Computador de dados','Acesso bloqueado. Resolva os 3 desafios: microscópio, DNA e tubos ('+n+'/3).');f.data=1;f.pc2=1;doc(1);save();return msg('🔓 Dados secretos liberados','2º número da senha final: '+P[1]+'\n\nDocumento 2: '+sc[1]+'\n\nA porta do Arquivo foi liberada.')}
+case 'gv':case 'gv2':case 'gv3':return search(o,'✨ Gaveta aberta: uma peça de circuito! Interaja de novo para pegar.','Gavetas vazias.');
+case 'sh3':return msg('🗄 Documentos antigos','Pastas de Curie, Franklin, Lovelace, Johnson, da Silveira, Goes de Jesus, Lutz e Zatz. Cada pista aponta para UMA delas.');
+case 'arq':f.arq=1;doc(2);save();return msg('🗄 Arquivos antigos','Pasta recente (Documento 3): '+sc[2]);
+case 'ph':f.ph=1;return msg('🖼 Fotografias','Uma foto antiga de laboratório. No verso: “O 3º número da senha final é '+P[2]+'.”');
+case 'dc':f.dc=1;return msg('📜 Documentos antigos','Nota: “A senha final une os números de três salas, nesta ordem: Laboratório → Pesquisas → Arquivo.”');
+case 'pc3':if(G.door[3])return say('Porta já liberada.');if(s=='chip'){f.pcOn=1;rm('chip');snd('ok')}if(!f.pcOn)return say('⚡ Sem energia. Falta uma peça de circuito: selecione-a no inventário.','bad');
+return kp('🔐 Computador do arquivo','Digite a senha final de 3 números (Laboratório, Pesquisas, Arquivo).','1234567890'.split(''),3,P.join(''),()=>{if(G.cl.every(x=>x)&&G.an[3])opn(3);else say('Senha correta, mas faltam pistas ('+G.cl.filter(x=>x).length+'/3) ou o Quadro de perguntas desta sala.','bad')});
+case 'ms':return G.cl.every(x=>x)&&G.an.every(x=>x)?final():msg('🖥 Máquina central','Acesso negado. Faltam pistas essenciais ('+G.cl.filter(x=>x).length+'/3).');
+}
+if(o.t=='plant')return msg('🪴 Planta carnívora','Dioneia (Dionaea muscipula): captura insetos porque o solo onde vive tem poucos nutrientes. Ela reage a quem chega perto!');
+msg('🖥 Monitor','Exibe listas de cientistas e linhas do tempo. Só fazem sentido para quem reuniu todas as pistas.')}
+function near(){const m=R[G.room],px=G.x,py=G.y-5;let b=null,bd=20;const ds=m.o.slice();if(G.room<1)ds.push({id:'door',t:'door',l:G.door[G.room]?'Porta aberta':'Porta trancada 🔒',x:386,y:112,w:14,h:40});
+ds.forEach(o=>{const d=Math.hypot(Math.max(o.x-px,0,px-o.x-o.w),Math.max(o.y-py,0,py-o.y-o.h));if(d<bd){bd=d;b=o}});return b}
+function act(){if(mode!='play'||modal)return;ac=.25;const o=near();if(!o)return say('Nada para examinar aqui. Aproxime-se de um objeto.');fi=0;use(o)}
+// ===== Movimento, colisões e atualização (delta time) =====
+const hb=(x,y,a,b,w,h)=>x-4<a+w&&x+4>a&&y-4<b+h&&y>b;
+function hit(x,y,cr){const m=R[G.room];return m.o.some(o=>hb(x,y,o.x,o.y,o.w,o.h))||(m.cr||[]).some(c=>hb(x,y,c[0],c[1],c[2],c[3]))||(!cr&&(m.pi||[]).some(p=>hb(x,y,p,0,12,H)))}
+function mv(dx,dy){const r=G.room,b=R[r].b||[44,240];let nx=G.x+dx,ny=G.y+dy;const dz=ny>104&&ny<158;nx=Math.max(r>0&&dz?-8:10,Math.min(G.door[r]&&r<1&&dz?408:388,nx));ny=Math.max(b[0]+10,Math.min(b[1]-2,ny));if(!hit(nx,ny,G.cr)){G.x=nx;G.y=ny}}
+function unstick(){const b=R[G.room].b||[44,240];for(let r=1;r<=40;r++)for(let a=0;a<16;a++){const nx=G.x+Math.round(Math.cos(a*Math.PI/8)*r),ny=G.y+Math.round(Math.sin(a*Math.PI/8)*r);if(nx>=10&&nx<=388&&ny>=b[0]+10&&ny<=b[1]-2&&!hit(nx,ny,G.cr)){G.x=nx;G.y=ny;return}}}
+function go(r,x){G.room=r;G.x=x;G.y=130;G.vis[r]=1;snd('door');say('📍 '+R[r].n);save()}
+function upd(dt){G.t+=dt;if((svT+=dt)>6){svT=0;save()}
+let ix=(K.right?1:0)-(K.left?1:0)+pad.x+JS.x,iy=(K.down?1:0)-(K.up?1:0)+pad.y+JS.y,l=Math.hypot(ix,iy);if(l>1){ix/=l;iy/=l;l=1}
+const m=R[G.room],want=!!(K.crouch||pad.cr||(m.pi||[]).some(p=>G.x+16>p&&G.x-16<p+12)),inP=(m.pi||[]).some(p=>hb(G.x,G.y,p,0,12,H));G.cr=want||inP;
+const sp=(G.cr?46:84)*dt;
+if(l>.1){G.dir=Math.abs(ix)>Math.abs(iy)?(ix>0?'right':'left'):(iy>0?'down':'up');mv(ix*sp,0);mv(0,iy*sp);wk+=dt*(G.cr?6:10);sd+=l*sp;if(sd>22){sd=0;snd('step')}}else wk=0;
+(m.vt||[]).forEach((v,i)=>{const on=(T+v[1])%5<2;if(on&&!vOn[i]&&Math.abs(G.x-v[0])<160)snd('steam');vOn[i]=on;if(on&&G.x+4>v[0]&&G.x-4<v[0]+22){{const a=G.x<v[0]+11?v[0]-6:v[0]+28,b2=a<v[0]?v[0]+28:v[0]-6;if(!hit(a,G.y,G.cr))G.x=a;else if(!hit(b2,G.y,G.cr))G.x=b2}if(toast<2.5)say('♨ Vapor quente! Espere o jato parar.','bad')}});
+if(hit(G.x,G.y,G.cr))unstick();if(G.x>=389&&G.door[G.room]&&G.room<1)go(G.room+1,30);else if(G.x<=1&&G.room>0)go(G.room-1,366);else if(G.x>=386&&G.room<1&&!G.door[G.room]&&G.y>104&&G.y<158&&toast<=0)say('🔒 Porta trancada! Chegue perto e toque em AGIR para ver o que falta.','bad');
+const o=near(),p=o?(TOUCH?'':'E · ')+(itemAt(o.id)?'✨ Pegar '+IT[itemAt(o.id)][1]:o.l):'';if(p!=lastPr){lastPr=p;const e=$('pr');e.textContent=p;e.style.display=p?'block':'none'}
+const s='🎯 '+OB[stg()]+(CF.tm?' · ⏱ '+fmt(G.t):'');if(s!=lastSt){lastSt=s;$('st').textContent=s}}
+// ===== Desenho em pixel art =====
+function itemSpr(it,cx,y,A){const b=CF.calm?0:Math.round(Math.sin(A*3)*2);g.globalAlpha=.4;rc(cx-10,y-16+b,20,14,'#ffe08a');g.globalAlpha=1;
+if(it=='card'){rc(cx-6,y-13+b,12,8,'#3b7ddd');rc(cx-6,y-10+b,12,2,'#fff');rc(cx-5,y-7+b,4,2,'#ffd166')}
+else if(it=='key'){rc(cx-7,y-12+b,5,5,'#ffd166');rc(cx-6,y-11+b,3,3,'#8a6a1a');rc(cx-2,y-10+b,9,2,'#ffd166');rc(cx+3,y-8+b,2,3,'#ffd166');rc(cx+6,y-8+b,2,2,'#ffd166')}
+else{rc(cx-6,y-13+b,12,9,'#2e8b57');rc(cx-3,y-11+b,6,5,'#111');for(let i=0;i<3;i++){rc(cx-5+i*4,y-4+b,2,2,'#ccc');rc(cx-5+i*4,y-15+b,2,2,'#ccc')}}
+if(!CF.calm){rc(cx+9*Math.sin(A*4),y-16+b+3*Math.cos(A*5),2,2,'#fff');rc(cx-9*Math.sin(A*3),y-9+b,1,1,'#fff')}}
+function dob(o,A){const{x,y,w,h,t}=o,cx=x+w/2,bl=['#a95d47','#d6b45b','#4e8c8c','#b9c6d5','#7a6c8c'];
+if(t=='desk'){rc(x,y+8,w,h-8,'#5e4430');rc(x,y,w,10,'#8e6a43');rc(x+2,y+2,10,6,'#e6e0c4');rc(x+w-18,y+3,12,5,'#d7cfa8');rc(x+4,y+h-3,w-8,3,'#2c2118')}
+else if(t=='pc'){rc(x,y+16,w,h-16,'#5e4430');rc(x,y+14,w,4,'#8e6a43');rc(cx-13,y,26,16,'#cfd6dc');rc(cx-11,y+2,22,12,'#0b2b3c');for(let i=0;i<4;i++)rc(cx-9,y+3+i*3,6+((i*5+Math.floor(A*3))%9),1,'#6be7e8');rc(cx-11,y+2+Math.floor(A*8)%12,22,1,'#6be7e855');rc(x+w-8,y+20,3,2,Math.floor(A*3)%2?'#ff5a5a':'#5a2020')}
+else if(t=='shelf'){rc(x,y,w,h,'#5b4333');for(let r=0;r<3;r++){rc(x+2,y+r*12+11,w-4,2,'#8e6a43');for(let i=0;i<(w-6)/6;i++)rc(x+3+i*6,y+r*12+2+(i*7%4),5,9-(i*7%4),bl[(i+r*3)%5])}}
+else if(t=='cab'){rc(x,y,w,h,'#566878');rc(x+2,y+2,w-4,h-4,'#6d8294');for(let i=0;i<Math.floor(h/14);i++){rc(x+3,y+3+i*14,w-6,11,'#7c91a2');rc(cx-4,y+7+i*14,8,2,'#2a3640')}}
+else if(t=='mic'){rc(x,y+14,w,h-14,'#5e4430');rc(x,y+12,w,4,'#8e6a43');rc(cx-8,y+10,16,3,'#3a4652');rc(cx+2,y,4,12,'#8896a5');rc(cx-6,y+1,8,5,'#a9b8c4');rc(cx-5,y+6,3,3,'#2b3640');rc(cx-4,y+9,8,2,Math.sin(A*3)>0?'#ffe08a':'#b49b4a')}
+else if(t=='rack'){rc(x,y+14,w,h-14,'#3d4a56');for(let i=0;i<4;i++){const tx=x+4+i*8;rc(tx,y+2,5,14,'#d8f1e8');rc(tx+1,y+7,3,8,['#6be7e8','#ff7a9a','#8ee06a','#ffd166'][i]);rc(tx+2,y+6-(A*14+i*5)%9,1,1,'#fff')}}
+else if(t=='plant')plant(o,A);
+else if(t=='box'){rc(x,y+4,w,h-4,'#b3392d');rc(x,y+4,w,4,'#d9574a');rc(cx-6,y,12,4,'#444');rc(cx-2,y+12,4,3,'#ffd166')}
+else if(t=='dna'){rc(cx-8,y+h-4,16,4,'#3a4652');for(let i=0;i<10;i++){const yy=y+2+i*3.6,dx=Math.sin(A*2.5+i*.7)*9;rc(cx+dx-1,yy,3,2,'#6be7e8');rc(cx-dx-1,yy,3,2,'#ff7ab0');if(i%2==0)rc(Math.min(cx+dx,cx-dx),yy+1,Math.abs(dx*2),1,'#ffffff77')}}
+else if(t=='photo'){for(let i=0;i<3;i++){rc(x+i*22,y,18,24,'#4a3a2a');rc(x+2+i*22,y+2,14,20,['#9bbbc4','#cbb99a','#b9a9cc'][i]);rc(x+7+i*22,y+8,5,5,'#444');rc(x+5+i*22,y+14,9,6,'#444')}}
+else if(t=='board'){rc(x,y,w,h,'#3a4652');rc(x+2,y+2,w-4,h-4,'#e8eef2');for(let i=0;i<3;i++)rc(x+6,y+8+i*7,w-14-i*9,2,'#8aa0b0');rc(x+w-13,y+4,9,9,(G.an&&G.an[G.room])?'#59e08a':'#ffd166');rc(x+4,y+h-4,w-8,2,'#8e6a43')}
+else if(t=='mach'){rc(x,y,w,h,'#2b3a52');rc(x+3,y+3,w-6,h-6,'#3b5070');rc(cx-12,y+10,24,24,'#0b2b3c');for(let k=0;k<8;k++){const a=A*1.5+k*Math.PI/4;rc(cx+Math.cos(a)*9-1,y+22+Math.sin(a)*9-1,3,3,'#ffd166')}rc(cx-3,y+19,6,6,Math.sin(A*4)>0?'#6be7e8':'#3aa9aa');for(let i=0;i<6;i++)rc(x+6+i*10,y+h-10,5,3,Math.floor(A*4+i)%3?'#59e08a':'#ff5a5a')}
+if(G.f.op&&G.f.op[o.id]){rc(x+3,y+(t=='box'?5:3),w-6,4,'#10171d');const it=itemAt(o.id);if(it)itemSpr(it,cx,y,A)}}
+function plant(o,A){const x=o.x,y=o.y,cx=x+8,d=Math.hypot(G.x-cx,G.y-6-y),sw=Math.round(Math.sin(A*2+x)*1.5);
+let op=CF.calm?3:d<30?(Math.sin(T*14)>0?0:2):d<75?7:2+(Math.sin(A*1.6+x)+1)*2.5;op=Math.round(op);const hx=cx+(d<75&&!CF.calm?Math.sign(G.x-cx)*2:0)+sw,hy=y+4;
+rc(x+3,y+12,10,8,'#b4623f');rc(x+2,y+12,12,2,'#d08358');rc(cx-1,hy+4,2,9,'#2f8a4a');rc(x-3+sw,y+10,7,2,'#3fae5a');rc(x+12-sw,y+8,7,2,'#3fae5a');
+rc(hx-4,hy-op,8,op*2+1,'#7a1f2b');rc(hx-6,hy-op-3,12,4,'#46b85c');rc(hx-6,hy+op,12,4,'#3a9a50');for(let i=0;i<4;i++){rc(hx-5+i*3,hy-op+1,2,2,'#f6f6e8');rc(hx-4+i*3,hy+op-2,2,2,'#f6f6e8')}}
+function HD(k,co,d,sk,y){const u=d=='up',dn=d=='down',t=co[8],ey=(w,h,c,yy)=>{if(u)return;if(dn){k(-2,yy,w,h,c);k(1,yy,w,h,c)}else k(1,yy,w,h,c)};
+if(t==0){k(-3,y,6,5,u?'#382b2c':sk);ey(1,1,'#111',y+2);k(-6,y-1,12,2,co[3]);k(-4,y-5,8,4,co[2]);k(-4,y-2,8,1,co[4])}
+else if(t==1){const hc=co[2];k(-3,y,6,5,u?hc:sk);if(!u){if(co[3])k(-3,y+2,6,1,co[3]);ey(1,1,'#111',y+2)}k(-4,y-2,8,3,hc);if(u)k(-4,y-2,8,9,hc);else if(dn){k(-4,y,1,7,hc);k(3,y,1,7,hc);k(-3,y,6,1,hc)}else{k(-4,y-1,3,8,hc);k(-3,y,2,1,hc)}k(2,y-4,3,3,co[4])}
+else if(t==2){k(-4,y-2,8,8,co[2]);if(u)k(-3,y+5,6,4,co[4]);else{k(-3,y,6,5,co[3]);k(-2,y+1,4,3,sk);ey(1,1,'#111',y+2);k(-3,y,2,1,'#ffffffaa')}}
+else if(t==3){k(-4,y-2,8,7,co[2]);k(-5,y,1,3,co[4]);k(4,y,1,3,co[4]);k(0,y-5,1,3,co[4]);k(-1,y-6,3,2,co[3]);if(!u){k(-3,y,6,3,'#0b1520');if(dn){k(-2,y+1,2,1,co[3]);k(1,y+1,2,1,co[3])}else k(0,y+1,3,1,co[3]);k(-2,y+4,4,1,co[4])}}
+else{k(-3,y-1,6,6,sk);k(-3,y-4,1,3,sk);k(2,y-4,1,3,sk);k(-3,y-5,1,1,co[2]);k(2,y-5,1,1,co[2]);if(!u){if(dn){k(-3,y+1,2,3,co[3]);k(1,y+1,2,3,co[3])}else k(0,y+1,3,3,co[3])}}}
+function pl(P){const c=P?P.cr:G.cr,d=P?P.d:G.dir,x=Math.round(P?P.x:G.x),y=Math.round(P?P.y:G.y),m=wk>0,s=P?P.s:(m?Math.floor(wk)%2:0),co=COAT[P&&P.k!=null?P.k:CF.coat]||COAT[0],sk=co[5],k=rc,hd=Y=>HD(k,co,d,sk,Y);
+g.save();g.translate(x,y);if(d=='left')g.scale(-1,1);g.globalAlpha=.3;k(-6,-1,12,3,'#000');g.globalAlpha=co[10]?.6:1;
+if(!c){k(-4,-6-(s?1:0),3,6,'#2a3a50');k(1,-6-(s?0:1),3,6,'#2a3a50');k(-5,-15,10,10,co[0]);k(-5,-8,10,2,'#3a2a1e');k(-1,-15,2,7,co[1]);if(d!='up')k(2,-13,2,2,'#ffd166');k(-7,-14,2,7,co[0]);k(5,-14,2,7,co[0]);k(-7,-8,2,2,sk);k(5,-8,2,2,sk);
+hd(-20);
+const e=ac>0?4:0;k(6+e,-12,4,4,'#d5e4ee');k(7+e,-11,2,2,'#7fd6e7');k(9+e,-8,1,3,'#8a6a3a')}
+else{k(-5,-3-(s?1:0),4,3,'#2a3a50');k(1,-3-(s?0:1),4,3,'#2a3a50');k(-6,-10,12,8,co[0]);k(-1,-10,2,6,co[1]);if(d!='up')k(2,-8,2,2,'#ffd166');hd(-15);k(7+(ac>0?3:0),-6,4,4,'#d5e4ee');k(8+(ac>0?3:0),-5,2,2,'#7fd6e7')}
+{const tr=P?P.tr:G.won;if(tr&&!c){k(-4,-16,8,5,'#ffd166');k(-6,-15,2,3,'#ffd166');k(4,-15,2,3,'#ffd166');k(-1,-11,2,2,'#c9a227');k(-3,-9,6,2,'#8a5a1a');k(-5,-12,2,2,sk);k(3,-12,2,2,sk);k(-3,-15,1,3,'#fff1b8');k(-9,-20,1,1,'#fff1b8');k(8,-22,1,1,'#fff1b8');k(7,-14,1,1,'#fff1b8')}}
+g.restore()}
+function ren(){const r=G.room,m=R[r],b=m.b||[44,240],A=CF.calm?0:T;
+rc(0,0,W,H,m.f);for(let y=b[0];y<b[1];y+=16)rc(0,y,W,1,m.t);for(let x=0;x<W;x+=32)rc(x,b[0],1,b[1]-b[0],m.t);
+rc(0,0,W,b[0],m.w);rc(0,b[0]-6,W,6,m.d);if(b[1]<H){rc(0,b[1],W,H-b[1],m.w);rc(0,b[1],W,5,m.d)}
+if(r==1){rc(0,18,W,8,'#6f7f8c');rc(0,22,W,2,'#9fb0bd');for(let j=0;j<8;j++)rc(j*50,16,4,12,'#55626d');rc(0,b[1]+14,W,8,'#6f7f8c')}
+else for(let i=0;i<6;i++){const x=24+i*64;rc(x,10,34,22,m.d);rc(x+2,12,30,18,r==3?'#e8d9b0':'#bfe6f0');rc(x+4,14,26,3,'#ffffff66')}
+g.globalAlpha=.12;for(const x of [80,200,320])rc(x-30,b[0]-8,60,90,'#fff6c0');g.globalAlpha=1;
+const dr=(x,op,l)=>{rc(x,112,14,40,m.d);rc(x+(l?0:2),114,12,36,op?'#1f2b24':'#556b7c');rc(x+(l?9:3),130,2,6,'#ffd166');rc(x+3,104,8,6,op?'#59e08a':'#ff5a5a')};
+if(r<1)dr(386,G.door[r],0);if(r>0)dr(0,1,1);
+const L=m.o.map(o=>[o.y+o.h,()=>dob(o,A)]);(m.cr||[]).forEach(c=>L.push([c[1]+c[3],()=>{rc(c[0],c[1],c[2],c[3],'#8a6a3a');rc(c[0]+2,c[1]+2,c[2]-4,c[3]-4,'#a9884f');rc(c[0]+c[2]/2-1,c[1],2,c[3],'#6b4f2a')}]));L.push([G.y,pl]);L.sort((a,b)=>a[0]-b[0]).forEach(a=>a[1]());
+(m.pi||[]).forEach(p=>{g.globalAlpha=.25;rc(p+10,84,6,84,'#000');g.globalAlpha=1;rc(p,80,12,92,'#7c8a97');rc(p+2,80,3,92,'#b7c5d1');rc(p+8,80,2,92,'#56626e');rc(p-1,80,14,4,'#3d4650');rc(p-1,168,14,4,'#3d4650');g.fillStyle='#ffd166';g.font='8px monospace';g.fillText('▼AGACHE',p-10,76)});
+(m.vt||[]).forEach(v=>{const c=(T+v[1])%5,on=c<2,wn=c>4.1;rc(v[0],b[1]-5,22,5,'#222');for(let i=0;i<4;i++)rc(v[0]+3+i*5,b[1]-4,2,3,'#555');const n=on?20:wn?5:0;g.globalAlpha=on?.75:.5;for(let i=0;i<n;i++){const s=on?5+i%3*2:2;rc(v[0]+(Math.sin(i*2.3+T*3)*.5+.5)*18,b[1]-8-(T*70+i*17)%(on?92:20),s,s,'#f4f8fb')}g.globalAlpha=1});
+if(!CF.calm){g.globalAlpha=.45;for(let i=0;i<16;i++)rc((i*61+T*(4+i%4))%W,b[0]+(i*37+T*5+Math.sin(T+i)*9)%(b[1]-b[0]),1,1,'#fff4c9');g.globalAlpha=1}}
+// ===== Entrada: teclado, toque e controle =====
+const M={arrowup:'up',w:'up',arrowdown:'down',s:'down',arrowleft:'left',a:'left',arrowright:'right',d:'right'};
+const inv_=()=>{if(mode!='play')return;modal?cl():inv()};
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' ','tab'].includes(k))e.preventDefault();
+if(modal){if(k=='arrowup'||k=='arrowleft'||k=='w'||k=='a')nav(-1);else if(k=='arrowdown'||k=='arrowright'||k=='s'||k=='d')nav(1);else if(k=='e'||k==' '||k=='enter'){if(!e.repeat)okb()}else if((k=='escape'||k=='tab')&&mode=='play')cl();return}
+if(k=='e'||k==' '){if(!e.repeat)act();return}if(k=='tab')return inv_();if(k=='escape'||k=='p')return pause();
+if(k=='control'||k=='c')K.crouch=1;else if(M[k])K[M[k]]=1});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(k=='control'||k=='c')K.crouch=0;else if(M[k])K[M[k]]=0});
+['blur','fullscreenchange','orientationchange','visibilitychange'].forEach(ev=>addEventListener(ev,()=>{for(const k in K)K[k]=0}));
+document.addEventListener('click',()=>{const a=document.activeElement;a&&a.blur&&a.blur()});document.addEventListener('contextmenu',e=>e.preventDefault());
+document.querySelectorAll('[data-k]').forEach(b=>{const k=b.dataset.k,on=e=>{e.preventDefault();try{b.setPointerCapture(e.pointerId)}catch(x){}K[k]=1},off=()=>K[k]=0;b.addEventListener('pointerdown',on);['pointerup','pointercancel','lostpointercapture'].forEach(v=>b.addEventListener(v,off))});
+document.querySelectorAll('[data-a]').forEach(b=>b.addEventListener('pointerdown',e=>{e.preventDefault();b.dataset.a=='act'?act():inv_()}));
+(()=>{const j=$('js'),kn=j.firstElementChild;let id=null;
+const mvJ=e=>{const r=j.getBoundingClientRect();let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);if(matchMedia('(orientation:portrait)').matches)[dx,dy]=[dy,-dx];const R2=r.width/2-8,l=Math.hypot(dx,dy);if(l>R2){dx*=R2/l;dy*=R2/l}kn.style.transform='translate('+dx+'px,'+dy+'px)';const m=Math.hypot(dx,dy)/R2;JS.x=m<.15?0:dx/R2;JS.y=m<.15?0:dy/R2};
+const end=e=>{if(id!==null&&e.pointerId!==id)return;id=null;JS.x=JS.y=0;kn.style.transform=''};
+j.addEventListener('pointerdown',e=>{e.preventDefault();id=e.pointerId;try{j.setPointerCapture(id)}catch(x){}mvJ(e)});
+j.addEventListener('pointermove',e=>{if(e.pointerId===id)mvJ(e)});['pointerup','pointercancel','lostpointercapture'].forEach(v=>j.addEventListener(v,end))})();
+$('bm').onclick=pause;$('bi').onclick=inv_;$('bp').onclick=map;$('bn').onclick=panel;$('bh').onclick=hint;$('bf').onclick=fs;
+async function fs(){try{if(document.fullscreenElement)await document.exitFullscreen();else{await document.documentElement.requestFullscreen();try{await screen.orientation.lock('landscape')}catch(e){}}}catch(e){}}
+addEventListener('gamepadconnected',()=>{document.body.classList.add('gp');say('🎮 Controle conectado: X interage, Círculo agacha, Options abre o menu')});
+addEventListener('gamepaddisconnected',()=>document.body.classList.remove('gp'));
+addEventListener('touchstart',()=>{if(!TOUCH){TOUCH=true;ui()}},{once:true,passive:true});
+function gp(){const p=[...(navigator.getGamepads?navigator.getGamepads():[])].find(Boolean);if(!p){pad.x=pad.y=pad.cr=0;return}
+const B=i=>!!(p.buttons[i]&&p.buttons[i].pressed),e=i=>B(i)&&!pp[i];let x=p.axes[0]||0,y=p.axes[1]||0;if(Math.hypot(x,y)<.22)x=y=0;
+const u=y<-.5||B(12)||x<-.5||B(14),d=y>.5||B(13)||x>.5||B(15);
+if(modal){pad.x=pad.y=pad.cr=0;if(u&&!pp.u)nav(-1);if(d&&!pp.d)nav(1);if(e(0))okb();if(e(1)&&mode=='play')cl()}
+else{pad.x=x||B(15)-B(14);pad.y=y||B(13)-B(12);pad.cr=B(1)?1:0;if(e(0))act();if(e(3))inv_()}
+if(e(9)&&mode=='play')modal?cl():pause();
+pp=p.buttons.map(b=>b.pressed);pp.u=u;pp.d=d}
+function ui(){const b=document.body;b.classList.toggle('hc',!!CF.hc);b.classList.toggle('tc',!!CF.tc);b.classList.toggle('an',!!CF.an);b.style.setProperty('--to',[1,.7,.5,.3][CF.ot|0]);b.classList.toggle('ts',TOUCH);b.style.setProperty('--fs',CF.big?'20px':'15px')}
+// ===== Laço principal =====
+function loop(ts){requestAnimationFrame(loop);const dt=Math.min((ts-last)/1000||0,.05);last=ts;gp();T+=dt;
+if(mode=='play'&&!modal)upd(dt);if(ac>0)ac-=dt;if(toast>0&&(toast-=dt)<=0)$('ts').style.opacity=0;
+if(mode=='lobby'&&PV&&PV.isConnected)drp(PV,CF.coat,CF.calm?0:Math.floor(T*3)%2);
+if(HM)HM.gain.value=mode=='play'?[.04,.02,.1,.05,.14][G.room]:.02;ren()}
+ui();newGame();lobby();requestAnimationFrame(loop);
+})();
+</script></body></html>
